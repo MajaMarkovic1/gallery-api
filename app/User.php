@@ -28,4 +28,14 @@ class User extends Authenticatable
         'password', 'remember_token',
     ];
 
+    public function galleries()
+    {
+        return $this->hasMany(Gallery::class);
+    }
+
+    public function comments()
+    {
+        return $this->hasMany(Comment::class);
+    }
+
 }
