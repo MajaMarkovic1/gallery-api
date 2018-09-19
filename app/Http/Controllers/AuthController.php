@@ -34,7 +34,7 @@ class AuthController extends Controller
             return $this->respondWithToken($token);
         }
 
-        return response()->json(['error' => 'Unauthorized'], 401);
+        return response()->json(['error' => 'You are not registered yet. Please register!'], 401);
     }
 
     public function register(StoreUsersRequest $request)
