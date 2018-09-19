@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Gallery;
 use Illuminate\Http\Request;
 
 class GalleriesController extends Controller
@@ -13,7 +14,7 @@ class GalleriesController extends Controller
      */
     public function index()
     {
-        //
+        return Gallery::with(['images', 'user'])->orderBy('created_at', 'desc')->get();
     }
 
     /**
