@@ -55,6 +55,11 @@ class GalleriesController extends Controller
         return User::where('id', $id)->with('galleries.images')->first();
     }
 
+    public function showMyGalleries()
+    {
+        return User::where('id', auth()->user()->id)->with('galleries.images')->first();
+    }
+
     /**
      * Show the form for editing the specified resource.
      *
