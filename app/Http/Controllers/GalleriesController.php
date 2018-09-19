@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Gallery;
+use App\User;
 use Illuminate\Http\Request;
 
 class GalleriesController extends Controller
@@ -47,6 +48,11 @@ class GalleriesController extends Controller
     public function show($id)
     {
         return Gallery::with(['user', 'images'])->findOrFail($id);
+    }
+
+    public function showAuthor($id)
+    {
+        return User::where('id', $id)->with('galleries.images')->first();
     }
 
     /**
