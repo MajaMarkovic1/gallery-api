@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Gallery;
 use App\User;
+use App\Image;
 use Illuminate\Http\Request;
 
 class GalleriesController extends Controller
@@ -36,7 +37,22 @@ class GalleriesController extends Controller
      */
     public function store(Request $request)
     {
-        //
+
+        $gallery = Gallery::create([
+            'title' => request('title'),
+            'description' => request('description'),
+            'user_id' => auth()->user()->id,
+            'images' => request('image_url')
+        ]);
+
+        $gallery->images()->create([
+            'image_url' => $gallery->images->image_url,
+            'gallery_id' => $gallery->id
+            
+        ]);
+
+        return $gallery;
+            
     }
 
     /**
