@@ -6,6 +6,8 @@ use App\Gallery;
 use App\User;
 use App\Image;
 use Illuminate\Http\Request;
+use App\Http\Requests\StoreGalleriesRequest;
+
 
 class GalleriesController extends Controller
 {
@@ -35,23 +37,26 @@ class GalleriesController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(StoreGalleriesRequest $request)
     {
 
-        $gallery = Gallery::create([
-            'title' => request('title'),
-            'description' => request('description'),
-            'user_id' => auth()->user()->id,
-            'images' => request('image_url')
-        ]);
+        $gallery = new Gallery();
+        $gallery->title = $request['title'];
+        $gallery->description = $request['description'];
+        $gallery->user_id = auth()->user()->id;
 
-        $gallery->images()->create([
-            'image_url' => $gallery->images->image_url,
-            'gallery_id' => $gallery->id
-            
-        ]);
+        $gallery->save();
 
-        return $gallery;
+        $images = [];
+
+        foreach ($request->images as $image) {
+           array_push($images, new Image([
+               'image_url' => $image,
+               'gallery_id' => $gallery->id
+               ]));
+        }
+
+        $gallery->images()->saveMany($images);
             
     }
 
