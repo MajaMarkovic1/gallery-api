@@ -41,11 +41,17 @@ class CommentsController extends Controller
      */
     public function store(StoreCommentsRequest $request)
     {
-        return Comment::create([
+
+        $comment =  Comment::create([
             'text' => request('text'),
             'gallery_id' => request('gallery_id'),
             'user_id' => auth()->user()->id
         ]);
+
+        $comment->load('user');
+
+        return $comment;
+        
     }
 
     /**

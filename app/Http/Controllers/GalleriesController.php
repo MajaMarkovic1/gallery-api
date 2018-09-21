@@ -51,15 +51,13 @@ class GalleriesController extends Controller
         $gallery->title = $request['title'];
         $gallery->description = $request['description'];
         $gallery->user_id = auth()->user()->id;
-
         $gallery->save();
 
         $images = [];
 
         foreach ($request->images as $image) {
            array_push($images, new Image([
-               'image_url' => $image,
-               'gallery_id' => $gallery->id
+               'image_url' => $image
                ]));
         }
 
