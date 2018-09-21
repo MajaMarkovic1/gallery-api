@@ -2,21 +2,16 @@
 
 namespace App\Http\Controllers;
 
-use App\Gallery;
-use App\User;
-use App\Image;
 use App\Comment;
-
 use Illuminate\Http\Request;
-use App\Http\Requests\StoreGalleriesRequest;
+use App\Http\Requests\StoreCommentsRequest;
 
-
-class GalleriesController extends Controller
+class CommentsController extends Controller
 {
     public function __construct()
     {
-        $this->middleware('auth:api', ['except' => ['index', 'show', 'showAuthor']]); 
-       
+        $this->middleware('auth:api'); 
+      
     }
     /**
      * Display a listing of the resource.
@@ -25,7 +20,7 @@ class GalleriesController extends Controller
      */
     public function index()
     {
-        return Gallery::with(['images', 'user', 'comments'])->orderBy('created_at', 'desc')->get();
+        //
     }
 
     /**
@@ -44,27 +39,13 @@ class GalleriesController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(StoreGalleriesRequest $request)
+    public function store(StoreCommentsRequest $request)
     {
-
-        $gallery = new Gallery();
-        $gallery->title = $request['title'];
-        $gallery->description = $request['description'];
-        $gallery->user_id = auth()->user()->id;
-
-        $gallery->save();
-
-        $images = [];
-
-        foreach ($request->images as $image) {
-           array_push($images, new Image([
-               'image_url' => $image,
-               'gallery_id' => $gallery->id
-               ]));
-        }
-
-        $gallery->images()->saveMany($images);
-            
+        return Comment::create([
+            'text' => request('text'),
+            'gallery_id' => request('gallery_id'),
+            'user_id' => auth()->user()->id
+        ]);
     }
 
     /**
@@ -75,18 +56,7 @@ class GalleriesController extends Controller
      */
     public function show($id)
     {
-        return Gallery::with(['user', 'images', 'comments.user'])->findOrFail($id);
-        
-    }
-
-    public function showAuthor($id)
-    {
-        return User::where('id', $id)->with('galleries.images')->first();
-    }
-
-    public function showMyGalleries()
-    {
-        return User::where('id', auth()->user()->id)->with('galleries.images')->first();
+        //
     }
 
     /**

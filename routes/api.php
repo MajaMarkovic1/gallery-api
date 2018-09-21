@@ -36,3 +36,8 @@ Route::resource('galleries', 'GalleriesController');
 Route::get('authors/{id}', 'GalleriesController@showAuthor');
 Route::get('my-galleries', 'GalleriesController@showMyGalleries');
 
+Route::resource('comments', 'CommentsController');
+
+
+
+
