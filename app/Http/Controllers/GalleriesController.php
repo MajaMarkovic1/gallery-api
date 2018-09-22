@@ -25,7 +25,7 @@ class GalleriesController extends Controller
      */
     public function index()
     {
-        return Gallery::with(['images', 'user', 'comments'])->orderBy('created_at', 'desc')->get();
+        return Gallery::with(['images', 'user', 'comments'])->orderBy('created_at', 'desc')->paginate(10);
     }
 
     /**
@@ -73,18 +73,17 @@ class GalleriesController extends Controller
      */
     public function show($id)
     {
-        return Gallery::with(['user', 'images', 'comments.user'])->findOrFail($id);
-        
+        return Gallery::with(['user', 'images', 'comments.user'])->findOrFail($id); 
     }
 
     public function showAuthor($id)
     {
-        return User::where('id', $id)->with('galleries.images')->first();
+        return Gallery::where('user_id', $id)->with(['user', 'images'])->orderBy('created_at', 'desc')->paginate(10);
     }
 
     public function showMyGalleries()
     {
-        return User::where('id', auth()->user()->id)->with('galleries.images')->first();
+        return Gallery::where('user_id', auth()->user()->id)->with(['user', 'images'])->orderBy('created_at', 'desc')->paginate(10);
     }
 
     /**
