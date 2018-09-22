@@ -118,6 +118,6 @@ class GalleriesController extends Controller
      */
     public function destroy($id)
     {
-        //
+        return Gallery::destroy($id);
     }
 }

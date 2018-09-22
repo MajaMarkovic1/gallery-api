@@ -96,6 +96,6 @@ class CommentsController extends Controller
      */
     public function destroy($id)
     {
-        //
+        return Comment::destroy($id);
     }
 }
