@@ -104,9 +104,23 @@ class GalleriesController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(StoreGalleriesRequest $request, $id)
     {
-        //
+        $gallery = Gallery::findOrFail($id);
+        //$gallery->images()->delete();
+        
+        $gallery->update($request->all());
+        
+        $images = [];
+
+        foreach ($request->images as $image) {
+           array_push($images, new Image([
+               'image_url' => $image
+               ]));
+        }
+
+        $gallery->images()->saveMany($images);
+        
     }
 
     /**
