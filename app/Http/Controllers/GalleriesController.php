@@ -139,8 +139,8 @@ class GalleriesController extends Controller
     public function update(StoreGalleriesRequest $request, $id)
     {
         $gallery = Gallery::findOrFail($id);
-        
         $gallery->update($request->all());
+        $gallery->images()->delete();
         
         $images = [];
 
