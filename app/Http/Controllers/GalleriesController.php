@@ -23,9 +23,21 @@ class GalleriesController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        return Gallery::with(['images', 'user', 'comments'])->orderBy('created_at', 'desc')->paginate(10);
+        $search = $request->query('term');
+  
+        return Gallery::with(['images', 'user', 'comments'])
+                    ->where('title', 'like', '%'.$search.'%')
+                    ->orWhere('description', 'like', '%'.$search.'%')
+                    ->orwhereHas('user', function ($query) use ($search) {
+                            $query->where('first_name', 'like', '%'.$search.'%');
+                            $query->orWhere('last_name', 'like', '%'.$search.'%');
+                            
+                        })
+                    ->orderBy('created_at', 'desc')
+                    ->paginate(10);
+        
     }
 
     /**
@@ -76,14 +88,34 @@ class GalleriesController extends Controller
         return Gallery::with(['user', 'images', 'comments.user'])->findOrFail($id); 
     }
 
-    public function showAuthor($id)
+    public function showAuthor(Request $request, $id)
     {
-        return Gallery::where('user_id', $id)->with(['user', 'images'])->orderBy('created_at', 'desc')->paginate(10);
+        $search = $request->query('term');
+
+        return Gallery::with(['user', 'images'])
+                ->where('user_id', $id)
+                ->where(function ($query) use ($search) {
+                    $query->where('title', 'like', '%'.$search.'%')
+                          ->orWhere('description', 'like', '%'.$search.'%');
+                })
+                ->orderBy('created_at', 'desc')
+                ->paginate(10);
     }
 
-    public function showMyGalleries()
+    public function showMyGalleries(Request $request)
     {
-        return Gallery::where('user_id', auth()->user()->id)->with(['user', 'images'])->orderBy('created_at', 'desc')->paginate(10);
+        $search = $request->query('term');
+        $user_id = auth()->user()->id;
+
+        return Gallery::with(['images', 'user', 'comments'])
+                ->where('user_id', $user_id)
+                ->where(function ($query) use ($search) {
+                    $query->where('title', 'like', '%'.$search.'%')
+                          ->orWhere('description', 'like', '%'.$search.'%');
+                })
+                ->orderBy('created_at', 'desc')
+                ->paginate(10);
+        
     }
 
     /**
@@ -107,7 +139,6 @@ class GalleriesController extends Controller
     public function update(StoreGalleriesRequest $request, $id)
     {
         $gallery = Gallery::findOrFail($id);
-        //$gallery->images()->delete();
         
         $gallery->update($request->all());
         
